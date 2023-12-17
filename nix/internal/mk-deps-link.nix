@@ -3,9 +3,11 @@
   linkFarm,
   writeText,
   deno2nix,
+  deno,
+  fetchurl,
   ...
 }: let
-  inherit (builtins) split elemAt fetchurl toJSON hashString baseNameOf;
+  inherit (builtins) split elemAt toJSON hashString baseNameOf;
   inherit (lib) flatten mapAttrsToList importJSON;
   inherit (lib.strings) sanitizeDerivationName;
   inherit (deno2nix.internal) artifactPath;
@@ -21,6 +23,7 @@ in
             path = fetchurl {
               inherit url sha256;
               name = sanitizeDerivationName (baseNameOf url);
+              curlOptsList = ["-H" "User-Agent: Deno/${deno.version}"];
             };
           }
           {
